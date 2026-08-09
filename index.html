@@ -1,78 +1,295 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>https://discord.gg/t101</title>
+    <title>Freecam Controller</title>
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
-            background: url('https://media.discordapp.net/attachments/1452695817751363654/1472605748457635881/MA4.jpeg?ex=69e8373a&is=69e6e5ba&hm=99b3034f59165fccc0b88dd9d28f512934253d022b23396fa05ddc03be1bb5f3&=&format=webp&width=928&height=530') no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Courier New', Courier, monospace;
-            color: #FF0000;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        
+        body {
+            background: rgba(0, 0, 0, 0.85);
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            color: #fff;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            flex-direction: column;
+            overflow: hidden;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        #container {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px 20px;
             text-align: center;
         }
-        .image-container img {
-            width: 750px; 
-            height: auto;
-            border: 2px solid #FF0000; 
-            border-radius: 15px;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.8); 
+        
+        #header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
-        .info {
-            margin-top: 20px;
-            font-size: 1.5em;
-            color: #FF0000; 
-            text-shadow: 0px 0px 8px #FF0000, 0px 0px 15px #FF0000, 0px 0px 25px #FF0000; 
-            letter-spacing: 4.5px; 
-            white-space: pre-wrap;
+        
+        #header .title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: 1px;
         }
-        .text {
-            margin-top: 20px;
-            font-size: 3em; 
-            color: #FF0000; 
-            text-shadow: 0px 0px 8px #FF0000, 0px 0px 15px #FF0000, 0px 0px 25px #FF0000; 
-            letter-spacing: 4.5px; 
+        
+        #header .title span {
+            color: #00ff88;
+        }
+        
+        #header .status {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 10px;
+            border-radius: 10px;
+        }
+        
+        #feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin: 8px 0;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+        
+        #feature-list::-webkit-scrollbar {
+            width: 3px;
+        }
+        
+        #feature-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+        }
+        
+        #feature-list::-webkit-scrollbar-thumb {
+            background: #00ff88;
+            border-radius: 10px;
+        }
+        
+        .feature-item {
+            font-size: 14px;
+            padding: 7px 14px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .feature-item .arrow {
+            font-size: 12px;
+            opacity: 0;
+            transition: all 0.2s ease;
+            color: #00ff88;
+        }
+        
+        .feature-item.active {
+            background: rgba(0, 255, 136, 0.12);
+            border-left: 3px solid #00ff88;
+            color: #ffffff;
+            font-weight: 500;
+            padding-left: 18px;
+        }
+        
+        .feature-item.active .arrow {
+            opacity: 1;
+        }
+        
+        .feature-item.inactive {
+            color: rgba(255, 255, 255, 0.40);
+        }
+        
+        .feature-item.inactive:hover {
+            color: rgba(255, 255, 255, 0.65);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        .feature-item .badge {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.2);
+            margin-left: auto;
+        }
+        
+        #model-info {
+            margin: 8px 0 6px 0;
+            padding: 6px 12px;
+            background: rgba(255, 170, 0, 0.08);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 170, 0, 0.1);
+            font-size: 12px;
+            color: #ffcc44;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        #model-info .label {
+            color: rgba(255, 255, 255, 0.35);
+            font-weight: 300;
+        }
+        
+        #model-info .value {
+            font-weight: 500;
+            color: #ffdd66;
+        }
+        
+        #controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 4px 12px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+        
+        #controls .key {
+            color: #ffaa00;
+            font-weight: 600;
+            background: rgba(255, 170, 0, 0.08);
+            padding: 1px 8px;
+            border-radius: 3px;
+            font-size: 10px;
+        }
+        
+        #status-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #00ff88;
+            margin-right: 6px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
     </style>
 </head>
 <body>
-    <div class="image-container">
-        <img src="https://media.discordapp.net/attachments/1452695817751363654/1472605748176486543/MA3.jpeg?ex=69e8373a&is=69e6e5ba&hm=d38a6c96ed4e650153db2a14c6b0e29b1313f42543a6270a0d4e4d9de8af0f49&=&format=webp&width=928&height=298" alt="Discord Image">
+    <div id="container">
+        <div id="header">
+            <div class="title">🎯 <span>FREECAM</span></div>
+            <div class="status"><span id="status-dot"></span>ACTIVE</div>
+        </div>
+        
+        <div id="feature-list"></div>
+        
+        <div id="model-info">
+            <span class="label">📦 Model:</span>
+            <span class="value" id="model-name">None</span>
+        </div>
+        
+        <div id="controls">
+            <span><span class="key">↑↓</span> Navigate</span>
+            <span><span class="key">←→</span> Change</span>
+            <span><span class="key">L</span> Toggle</span>
+            <span><span class="key">Click</span> Activate</span>
+        </div>
     </div>
-    <audio autoplay loop>
-        <source src="https://cdn.discordapp.com/attachments/1364231189862547458/1401032984379003001/744500e856546f84.mp3?ex=688ecd25&is=688d7ba5&hm=b4691490773c836acf63284a967394b557328b5774aa2fc485f0748e1be60abf&" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
-   <div class="info" id="ip-info">
-        <strong>IP: <span id="ip"></span></strong><br>
-        <span><strong>City:</strong> <span id="city"></span></span><br>
-        <span><strong>Region:</strong> <span id="region"></span></span><br>
-        <span><strong>Country:</strong> <span id="country"></span></span><br>
-        <span><strong>Location:</strong> <span id="loc"></span></span><br>
-        <span><strong>Organization:</strong> <span id="org"></span></span><br>
-        <span><strong>Timezone:</strong> <span id="timezone"></span></span>
-    </div>
-    <div class="text">  team 101 ناك امك 
     
-</div>
-
     <script>
-         fetch('https://ipinfo.io/json')
-        .then(response => response.json())
-        .then(data => {
-            delete data.readme;
-            const infoDiv = document.getElementById('ip-info');
-            infoDiv.textContent = JSON.stringify(data, null, 2);
+        let currentFeature = 1;
+        let features = [];
+        let modelName = "None";
+        let isClickable = true;
+        
+        window.addEventListener('message', function(event) {
+            const data = event.data;
+            if (data.type === 'update') {
+                if (data.features) features = data.features;
+                if (data.currentFeature) currentFeature = data.currentFeature;
+                if (data.modelName) modelName = data.modelName;
+                render();
+            }
         });
+        
+        function render() {
+            const container = document.getElementById('feature-list');
+            container.innerHTML = '';
+            
+            features.forEach((feature, index) => {
+                const div = document.createElement('div');
+                div.className = 'feature-item';
+                const isActive = (index + 1) === currentFeature;
+                
+                if (isActive) {
+                    div.classList.add('active');
+                    div.innerHTML = `
+                        <span class="arrow">▶</span>
+                        <span>${feature}</span>
+                        <span class="badge">SELECTED</span>
+                    `;
+                } else {
+                    div.classList.add('inactive');
+                    div.innerHTML = `
+                        <span class="arrow" style="opacity:0;">▶</span>
+                        <span>${feature}</span>
+                        <span class="badge"></span>
+                    `;
+                }
+                container.appendChild(div);
+            });
+            
+            document.getElementById('model-name').textContent = modelName || 'None';
+        }
+        
+        // إرسال رسالة عند النقر
+        document.addEventListener('click', function(e) {
+            if (isClickable) {
+                window.parent.postMessage({ type: 'click' }, '*');
+                isClickable = false;
+                setTimeout(() => { isClickable = true; }, 300);
+            }
+        });
+        
+        // إرسال رسالة عند الضغط على مفاتيح
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                const keyMap = {
+                    'ArrowUp': 'up',
+                    'ArrowDown': 'down',
+                    'ArrowLeft': 'left',
+                    'ArrowRight': 'right'
+                };
+                window.parent.postMessage({ 
+                    type: 'key', 
+                    key: keyMap[e.key] 
+                }, '*');
+            }
+        });
+        
+        // منع التمرير
+        document.addEventListener('wheel', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+        
+        render();
     </script>
 </body>
 </html>
